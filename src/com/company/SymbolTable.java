@@ -1,7 +1,7 @@
 package com.company;
 
 public class SymbolTable {
-    private Node root;
+    public Node root;
     public SymbolTable(){
         root = null;
     }
@@ -10,22 +10,15 @@ public class SymbolTable {
         this.root = root;
     }
 
-    public Boolean findNode(String info){
+    public Node findNode(Node root, String info){
         //tree is empty or we have the info at the root
-        if(root == null || root.info.compareTo(info) == 0)
-            return true;
-        Node currentNode = this.root;
-        Boolean found = false;
-        //if the tree is not empty, we compare the new info to see in which direction we need to go down the tree
-        while(currentNode != null && !found){
-            if(currentNode.info.compareTo(info) == 0)
-                found = true;
-            else if(root.getInfo().compareTo(info) > 0)
-                currentNode = root.getLeft();
-            else
-                currentNode = root.getRight();
-        }
-        return found;
+        if (root==null || root.info.compareTo(info) == 0)
+            return root;
+
+        if (root.info.compareTo(info) > 0)
+            return findNode(root.left, info);
+
+        return findNode(root.right, info);
     }
 
     public void insertNode(String info){
@@ -34,12 +27,12 @@ public class SymbolTable {
 
     public Node insertRec(Node root, String info){
         if (root == null){
-            this.root = new Node(info);
+            root = new Node(info);
             return root;
         }
-        if(info.compareTo(root.info) > 0)
+        if(info.compareTo(root.info) < 0)
             root.left = (insertRec(root.left, info));
-        else if(info.compareTo(root.info) < 0)
+        else if(info.compareTo(root.info) > 0)
             root.right = (insertRec(root.right, info));
         return root;
     }

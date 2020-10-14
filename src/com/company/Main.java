@@ -10,6 +10,8 @@ public class Main {
 	    symtbl.insertNode("b");
 
         System.out.println(symtbl.toString());
-		System.out.println(symtbl.findNode("a"));
+		System.out.println(symtbl.root);
+		System.out.println(symtbl.findNode(symtbl.root, "a"));
+
     }
 }

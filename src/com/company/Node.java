@@ -4,8 +4,8 @@ public class Node {
     public Node right;
     public Node left;
     public String info;
-    private static int positionInTable = 0;
-    private int position;
+    public static int positionInTable = 0;
+    public int position;
 
     public Node(Node right, Node left, String info) {
         this.right = right;
@@ -23,10 +23,6 @@ public class Node {
 
     public static int getPositionInTable() {
         return positionInTable;
-    }
-
-    public static void setPositionInTable(int positionInTable) {
-        Node.positionInTable = positionInTable;
     }
 
     public int getPosition() {

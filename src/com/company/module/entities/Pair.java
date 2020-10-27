@@ -1,4 +1,4 @@
-package com.company;
+package com.company.module.entities;
 
 public class Pair<K,V> {
     private String K;

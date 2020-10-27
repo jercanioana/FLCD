@@ -1,0 +1,15 @@
+{
+int sum;
+int n;
+int a;
+{
+sum = 0;
+read(n);
+while (n > 0) {
+read (a);
+sum = sum + a;
+n = n - 1;
+}
+write(sum);
+}
+}

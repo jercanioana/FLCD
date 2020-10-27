@@ -1,8 +1,10 @@
-package com.company;
+package com.company.module.entities;
+
+import com.company.module.entities.Node;
+import com.company.module.entities.Pair;
+import com.company.module.entities.SymbolTable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
 
 
 public class PIF {
@@ -13,7 +15,7 @@ public class PIF {
     }
 
     public void genPIF(String token, Integer pos){
-        Pair p = new Pair(token, pos);
+        Pair p = new Pair<>(token, pos);
         pif.add(p);
     }
 
@@ -25,5 +27,13 @@ public class PIF {
             st.insertNode(token);
             return st.findNode(st.root, token).position;
         }
+    }
+
+    public int getSize(){
+        return pif.size();
+    }
+
+    public Pair getElement(int index){
+        return pif.get(index);
     }
 }

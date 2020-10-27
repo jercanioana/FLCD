@@ -1,4 +1,6 @@
-package com.company;
+package com.company.module.entities;
+
+import com.company.module.entities.Node;
 
 public class SymbolTable {
     public Node root;

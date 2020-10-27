@@ -1,4 +1,4 @@
-package com.company;
+package com.company.module.entities;
 
 public class Node {
     public Node right;
@@ -19,6 +19,9 @@ public class Node {
         this.info = info;
         this.position = positionInTable;
         positionInTable++;
+    }
+
+    public Node() {
     }
 
     public static int getPositionInTable() {

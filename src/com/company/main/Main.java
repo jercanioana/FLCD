@@ -12,8 +12,7 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) {
-    	Node root = new Node();
-	    SymbolTable symtbl = new SymbolTable(root);
+
 	    Scanner scanner = new Scanner();
 
 		BufferedReader bufferedReader;
@@ -31,8 +30,10 @@ public class Main {
 		}
 		PIF pif = scanner.getPif();
 		for(int i = 0; i < pif.getSize(); i++){
-			System.out.println(pif.getElement(i).getK() + " " + pif.getElement(i).getV());
+			System.out.println("Token: " + pif.getElement(i).getK() + " " + "Position: " + pif.getElement(i).getV());
 		}
+		SymbolTable st = scanner.getSt();
+		st.inorder();
 
     }
 }

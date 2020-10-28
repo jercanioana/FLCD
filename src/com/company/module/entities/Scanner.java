@@ -24,52 +24,60 @@ public class Scanner {
 
     public void getTokensFromLine(String line, int lineNumber){
 
-
+        String copyline = line;
         String[] tokens = line.split("[\\[|\\(|\\)|\\s|\\;|\\{|\\}|\\]]+");
+
            for (int i = 0; i < tokens.length; i++) {
               String token = tokens[i];
                 if (this.isReservedWord(token) || this.isOperator(token)) {
                        pif.genPIF(token, -1);
+                }else if(copyline.matches(".*[\\[|\\(|\\)|\\s|\\;|\\{|\\}|\\]]+.*")) {
+                    int index = 0;
+                    while (index < line.length()) {
+                        String sep = String.valueOf(line.charAt(index));
+                        if (separators.contains(sep) && !sep.equals(" ")) {
+                            pif.genPIF(sep, -1);
+                        }
+                        index++;
 
+                    }
+                    if (this.isIdentifier(token)) {
+                        int positionInPif = pif.pos(token, st);
+                        pif.genPIF("identifier", positionInPif);
+                    }else if(this.isConstant(token)) {
+                        int positionInPif = pif.pos(token, st);
+                        pif.genPIF("constant", positionInPif);
+                    }else if(token.contains("\"")) {
+                        StringBuilder stringConstant = new StringBuilder(token + " ");
+                        int idx = i+1;
+                        String nextToken = tokens[idx];
+                        while(idx < tokens.length && !nextToken.contains("\"")){
+                            stringConstant.append(nextToken);
+                            stringConstant.append(" ");
+                            idx++;
+                            nextToken = tokens[idx];
+                        }
+                        stringConstant.append(tokens[idx]);
+                        i = idx;
+                        int positionInPif = pif.pos(stringConstant.toString(), st);
+                        pif.genPIF("constant", positionInPif);
 
-                } else {
-                       if (this.isIdentifier(token) || this.isConstant(token)) {
-                           int positionInPif = pif.pos(token, st);
-                           pif.genPIF(token, positionInPif);
+                    }
 
-                       } else if(token.contains("\"")) {
-                           StringBuilder stringConstant = new StringBuilder(token + " ");
-                           int idx = i+1;
-                           String nextToken = tokens[idx];
-                           while(!nextToken.contains("\"")){
-                               stringConstant.append(nextToken);
-                               stringConstant.append(" ");
-                               idx++;
-                               nextToken = tokens[idx];
-                           }
-                           stringConstant.append(tokens[idx]);
-                           i = idx;
-                           int positionInPif = pif.pos(stringConstant.toString(), st);
-                           pif.genPIF(stringConstant.toString(), positionInPif);
+                }
+                else{
+                    System.out.println("At line: " + lineNumber + " error: " + token );
+                    System.out.println("Lexical error.");
+                }
+           }
 
-                       }
-                       else{
-                           System.out.println("At line: " + lineNumber + " error: " + token );
-                           System.out.println("Lexical error.");
-                       }
-                   }
-               }
-
-           int index = 0;
-        while(index < line.length()){
-            String token = String.valueOf(line.charAt(index));
-            if(separators.contains(token)){
-                pif.genPIF(token, -1);
-            }
-            index++;
         }
 
-    }
+
+
+
+
+
 
     public Boolean isReservedWord(String word){
         return reservedWords.contains(word);
@@ -97,5 +105,9 @@ public class Scanner {
 
     public PIF getPif() {
         return pif;
+    }
+
+    public SymbolTable getSt() {
+        return st;
     }
 }

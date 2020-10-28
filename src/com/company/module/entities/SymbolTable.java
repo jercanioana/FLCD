@@ -39,6 +39,16 @@ public class SymbolTable {
         return root;
     }
 
+    public void inorder(){ inorderRec(root);}
+
+    public void inorderRec(Node root){
+        if(root != null){
+            inorderRec(root.left);
+            System.out.println(root.info + " Position: " + root.position);
+            inorderRec(root.right);
+        }
+    }
+
     public Node getRoot() {
         return root;
     }

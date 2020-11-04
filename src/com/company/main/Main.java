@@ -7,6 +7,7 @@ import com.company.module.entities.SymbolTable;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class Main {
@@ -17,7 +18,7 @@ public class Main {
 
 		BufferedReader bufferedReader;
 		try{
-			bufferedReader = new BufferedReader(new FileReader("p2.txt"));
+			bufferedReader = new BufferedReader(new FileReader("p3.txt"));
 			String line = bufferedReader.readLine();
 			int lineNumber = 1;
 			while(line != null){
@@ -29,11 +30,21 @@ public class Main {
 			e.printStackTrace();
 		}
 		PIF pif = scanner.getPif();
-		for(int i = 0; i < pif.getSize(); i++){
-			System.out.println("Token: " + pif.getElement(i).getK() + " " + "Position: " + pif.getElement(i).getV());
-		}
+			try {
+				FileWriter myWriter = new FileWriter("PIF.out");
+				for(int i = 0; i < pif.getSize(); i++) {
+					myWriter.write("Token: " + pif.getElement(i).getK() + " " + "Position: " + pif.getElement(i).getV() + "\n");
+				}
+				myWriter.close();
+
+			} catch (IOException e) {
+				System.out.println("An error occurred.");
+				e.printStackTrace();
+			}
+
 		SymbolTable st = scanner.getSt();
 		st.inorder();
+
 
     }
 }

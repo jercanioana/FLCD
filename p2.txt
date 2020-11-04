@@ -2,21 +2,21 @@
 int a;
 int d;
 {
-read(a);
+read ( a );
 d = 2;
 int number;
 number = a;
-while (d < number) execute {
+while ( d < number ) execute {
 if ( number % d == 0) then {
 prime = 0;
 else
 prime = 1;
 }
 d = d + 1;
-if (prime == 0) then {
-write("Number is prime");
+if ( prime == 0 ) then {
+write ( "Number is prime" );
 else
-write("Number is not prime");
+write ( "Number is not prime" );
 }
 }
 }

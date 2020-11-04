@@ -13,7 +13,7 @@ public class Scanner {
     private SymbolTable st = new SymbolTable();
 
     public Scanner(){
-        List<String> resWordsList = Arrays.asList("if","read","write", "int", "then", "else", "while", "execute");
+        List<String> resWordsList = Arrays.asList("if","read","write","string", "int", "then", "else", "while", "execute");
         List<String> operatorsList = Arrays.asList("=","+","-","/","=",">=", "<=", "<", ">", "==", "%");
         List<String> separatorsList = Arrays.asList(" ",";", ",", "}","{", "[", "]", "(", ")");
         this.reservedWords.addAll(resWordsList);
@@ -25,22 +25,15 @@ public class Scanner {
     public void getTokensFromLine(String line, int lineNumber){
 
         String copyline = line;
-        String[] tokens = line.split("[\\[|\\(|\\)|\\s|\\;|\\{|\\}|\\]]+");
+//        String[] tokens = line.split("[\\[|\\(|\\)|\\s|\\;|\\{|\\}|\\]]+");
+        String[] tokens = line.split("[\\[|\\s|\\;|\\{|\\}|\\]]+");
 
            for (int i = 0; i < tokens.length; i++) {
               String token = tokens[i];
-                if (this.isReservedWord(token) || this.isOperator(token)) {
+              if (this.isReservedWord(token) || this.isOperator(token) || (separators.contains(token))){
                        pif.genPIF(token, -1);
-                }else if(copyline.matches(".*[\\[|\\(|\\)|\\s|\\;|\\{|\\}|\\]]+.*")) {
-                    int index = 0;
-                    while (index < line.length()) {
-                        String sep = String.valueOf(line.charAt(index));
-                        if (separators.contains(sep) && !sep.equals(" ")) {
-                            pif.genPIF(sep, -1);
-                        }
-                        index++;
+              }else{
 
-                    }
                     if (this.isIdentifier(token)) {
                         int positionInPif = pif.pos(token, st);
                         pif.genPIF("identifier", positionInPif);
@@ -62,22 +55,27 @@ public class Scanner {
                         int positionInPif = pif.pos(stringConstant.toString(), st);
                         pif.genPIF("constant", positionInPif);
 
+                    }else{
+                        System.out.println("At line: " + lineNumber + " error: " + token );
+                        System.out.println("Lexical error.");
                     }
 
                 }
-                else{
-                    System.out.println("At line: " + lineNumber + " error: " + token );
-                    System.out.println("Lexical error.");
+
+
                 }
+        int index = 0;
+        while (index < line.length()) {
+            String sep = String.valueOf(line.charAt(index));
+            if (sep.equals(";")) {
+                pif.genPIF(sep, -1);
+            }
+            index++;
+
+
            }
 
         }
-
-
-
-
-
-
 
     public Boolean isReservedWord(String word){
         return reservedWords.contains(word);

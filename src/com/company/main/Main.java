@@ -1,9 +1,6 @@
 package com.company.main;
 
-import com.company.module.entities.Node;
-import com.company.module.entities.PIF;
-import com.company.module.entities.Scanner;
-import com.company.module.entities.SymbolTable;
+import com.company.module.entities.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -44,7 +41,21 @@ public class Main {
 
 		SymbolTable st = scanner.getSt();
 		st.inorder();
-
-
+		FiniteAutomatan fa = new FiniteAutomatan();
+		fa.getFAFromFile();
+		System.out.println("Q: ");
+		fa.printQ();
+		System.out.println("Alphabet: ");
+		fa.printAlphabet();
+		System.out.println("Initial state: ");
+		fa.printInitialState();
+		System.out.println("Final states: ");
+		fa.printF();
+		System.out.println("Transition function: ");
+		fa.printTransitionFunction();
+		System.out.println("Is deterministic: ");
+		System.out.println(fa.isDeterministic());
+		String[] symbols = new String[]{"a", "a", "b"};
+		System.out.println(fa.isAccepted(symbols));
     }
 }

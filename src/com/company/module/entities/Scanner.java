@@ -33,7 +33,6 @@ public class Scanner {
               if (this.isReservedWord(token) || this.isOperator(token) || (separators.contains(token))){
                        pif.genPIF(token, -1);
               }else{
-
                     if (this.isIdentifier(token)) {
                         int positionInPif = pif.pos(token, st);
                         pif.genPIF("identifier", positionInPif);
@@ -61,13 +60,11 @@ public class Scanner {
                     }
 
                 }
-
-
-                }
+           }
         int index = 0;
         while (index < line.length()) {
             String sep = String.valueOf(line.charAt(index));
-            if (sep.equals(";")) {
+            if (sep.equals(";") || sep.equals("}") || sep.equals("{")) {
                 pif.genPIF(sep, -1);
             }
             index++;

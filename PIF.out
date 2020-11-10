@@ -1,3 +1,4 @@
+Token: { Position: -1
 Token: int Position: -1
 Token: identifier Position: 0
 Token: ; Position: -1
@@ -7,6 +8,7 @@ Token: ; Position: -1
 Token: int Position: -1
 Token: identifier Position: 2
 Token: ; Position: -1
+Token: { Position: -1
 Token: identifier Position: 0
 Token: = Position: -1
 Token: constant Position: 3
@@ -22,6 +24,7 @@ Token: identifier Position: 1
 Token: > Position: -1
 Token: constant Position: 3
 Token: ) Position: -1
+Token: { Position: -1
 Token: read Position: -1
 Token: ( Position: -1
 Token: identifier Position: 2
@@ -39,8 +42,11 @@ Token: identifier Position: 1
 Token: - Position: -1
 Token: constant Position: 4
 Token: ; Position: -1
+Token: } Position: -1
 Token: write Position: -1
 Token: ( Position: -1
 Token: identifier Position: 0
 Token: ) Position: -1
 Token: ; Position: -1
+Token: } Position: -1
+Token: } Position: -1

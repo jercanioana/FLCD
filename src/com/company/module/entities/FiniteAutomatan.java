@@ -14,10 +14,15 @@ public class FiniteAutomatan {
     private ArrayList<String> alphabet = new ArrayList<>();
     private ArrayList<String> F = new ArrayList<>();
 
-    public void getFAFromFile(){
+
+    public FiniteAutomatan(String fileName){
+        getFAFromFile(fileName);
+    }
+
+    public void getFAFromFile(String fileName){
         BufferedReader bufferedReader;
         try{
-            bufferedReader = new BufferedReader(new FileReader("FA.txt"));
+            bufferedReader = new BufferedReader(new FileReader(fileName));
             String line = bufferedReader.readLine();
             int linenumber = 0;
             while(line != null){
@@ -60,7 +65,6 @@ public class FiniteAutomatan {
 
                     }
                 }
-
                 linenumber++;
                 line = bufferedReader.readLine();
             }
@@ -86,15 +90,16 @@ public class FiniteAutomatan {
         return true;
     }
 
-    public boolean isAccepted(String[] sequence){
+    public boolean isAccepted(String sequence){
 
         if(!this.isDeterministic())
             return false;
 
         String start = this.initialState;
-        boolean found = false;
-        for(int i = 0; i < sequence.length; i++) {
-            String symbol = sequence[i];
+
+        for(int i = 0; i < sequence.length(); i++) {
+            boolean found = false;
+            String symbol = String.valueOf(sequence.charAt(i));
             for (Function function : transitionFunction) {
                 if (function.getStartState().equals(start)) {
                     if (function.getSymbol().equals(symbol)) {

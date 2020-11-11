@@ -41,21 +41,23 @@ public class Main {
 
 		SymbolTable st = scanner.getSt();
 		st.inorder();
-		FiniteAutomatan fa = new FiniteAutomatan();
-		fa.getFAFromFile();
-		System.out.println("Q: ");
-		fa.printQ();
-		System.out.println("Alphabet: ");
-		fa.printAlphabet();
-		System.out.println("Initial state: ");
-		fa.printInitialState();
-		System.out.println("Final states: ");
-		fa.printF();
-		System.out.println("Transition function: ");
-		fa.printTransitionFunction();
-		System.out.println("Is deterministic: ");
-		System.out.println(fa.isDeterministic());
-		String[] symbols = new String[]{"a", "a", "b"};
-		System.out.println(fa.isAccepted(symbols));
+//		FiniteAutomatan fa = new FiniteAutomatan("FA.txt");
+//
+//		System.out.println("Q: ");
+//		fa.printQ();
+//		System.out.println("Alphabet: ");
+//		fa.printAlphabet();
+//		System.out.println("Initial state: ");
+//		fa.printInitialState();
+//		System.out.println("Final states: ");
+//		fa.printF();
+//		System.out.println("Transition function: ");
+//		fa.printTransitionFunction();
+//		System.out.println("Is deterministic: ");
+//		System.out.println(fa.isDeterministic());
+//		String symbols = "aab";
+//		System.out.println(fa.isAccepted(symbols));
+//		String symbols2 = "abb";
+//		System.out.println(fa.isAccepted(symbols2));
     }
 }

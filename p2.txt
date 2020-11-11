@@ -7,7 +7,7 @@ d = 2;
 int number;
 number = a;
 while ( d < number ) execute {
-if ( number % d == 0) then {
+if ( number % d == 0 ) then {
 prime = 0;
 else
 prime = 1;

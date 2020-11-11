@@ -11,6 +11,8 @@ public class Scanner {
     private ArrayList<String> separators = new ArrayList<>();
     private PIF pif = new PIF();
     private SymbolTable st = new SymbolTable();
+    private FiniteAutomatan FAForIdentifiers = new FiniteAutomatan("FAid.txt");
+    private FiniteAutomatan FAForConstants = new FiniteAutomatan("FAconst.txt");
 
     public Scanner(){
         List<String> resWordsList = Arrays.asList("if","read","write","string", "int", "then", "else", "while", "execute");
@@ -87,11 +89,13 @@ public class Scanner {
     }
 
     public Boolean isIdentifier(String id){
-        return id.matches("^[a-z]([a-zA-Z0-9])*");
+        return FAForIdentifiers.isAccepted(id);
+//        return id.matches("^[a-z]([a-zA-Z0-9])*");
     }
 
     public Boolean isConstant(String constant){
-        if(constant.matches("[+-]?[1-9][0-9]*") || constant.matches("0"))
+        //if(constant.matches("[+-]?[1-9][0-9]*") || constant.matches("0"))
+        if(FAForConstants.isAccepted(constant))
             return true;
         else{
             return constant.matches("\"[0-9A-Za-z_]+\"");

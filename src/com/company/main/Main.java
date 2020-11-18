@@ -30,7 +30,7 @@ public class Main {
 			try {
 				FileWriter myWriter = new FileWriter("PIF.out");
 				for(int i = 0; i < pif.getSize(); i++) {
-					myWriter.write("Token: " + pif.getElement(i).getK() + " " + "Position: " + pif.getElement(i).getV() + "\n");
+					myWriter.write("Token: " + pif.getElement(i).getL() + " " + "Position: " + pif.getElement(i).getR() + "\n");
 				}
 				myWriter.close();
 
@@ -39,8 +39,15 @@ public class Main {
 				e.printStackTrace();
 			}
 
-		SymbolTable st = scanner.getSt();
-		st.inorder();
+//		SymbolTable st = scanner.getSt();
+//		st.inorder();
+		Grammar g = new Grammar("g1.txt");
+		System.out.println(g.getNonTerminals());
+		System.out.println(g.getTerminals());
+		for(Production p : g.getProducts()) {
+			System.out.println(p.toString());
+		}
+		System.out.println(g.getStartSymbol());
 //		FiniteAutomatan fa = new FiniteAutomatan("FA.txt");
 //
 //		System.out.println("Q: ");

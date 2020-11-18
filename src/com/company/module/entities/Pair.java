@@ -1,27 +1,25 @@
 package com.company.module.entities;
 
-public class Pair<K,V> {
-    private String K;
-    private Integer V;
+public class Pair<L, R> {
+    private L l;
+    private R r;
 
-    public Pair(String k, Integer v) {
-        K = k;
-        V = v;
+    public Pair(L l, R r) {
+        this.l = l;
+        this.r = r;
     }
 
-    public String getK() {
-        return K;
+
+    public R getR() {
+        return r;
     }
 
-    public void setK(String k) {
-        K = k;
+
+    public void setR(R r) {
+        this.r = r;
     }
 
-    public Integer getV() {
-        return V;
-    }
-
-    public void setV(Integer v) {
-        V = v;
+    public L getL() {
+        return l;
     }
 }

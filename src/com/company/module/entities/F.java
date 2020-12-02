@@ -2,18 +2,16 @@ package com.company.module.entities;
 import java.util.ArrayList;
 
 public class F {
-    private int k;
     private String symbol;
     private ArrayList<String> set = new ArrayList<>();
 
-    public F(int k, String symbol, ArrayList<String> set) {
-        this.k = k;
+    public F(String symbol) {
+
         this.symbol = symbol;
-        this.set = set;
     }
 
-    public int getK() {
-        return k;
+    public void add(String s){
+        set.add(s);
     }
 
     public String getSymbol() {
@@ -22,5 +20,13 @@ public class F {
 
     public ArrayList<String> getSet() {
         return set;
+    }
+
+    @Override
+    public String toString() {
+        return "F{" +
+                "symbol='" + symbol + '\'' +
+                ", set=" + set +
+                '}';
     }
 }

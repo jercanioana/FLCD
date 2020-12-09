@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main {
 
@@ -46,8 +47,19 @@ public class Main {
 			System.out.println(p.toString());
 		}
 		System.out.println(g.getStartSymbol());
-		Parser p = new Parser(g);
-		System.out.println(p.getFirsts("S"));
+		Parser parser = new Parser(g);
+		ParseTable parseTable = parser.getParseTable();
+		System.out.println(parseTable);
+		ArrayList<String> w = new ArrayList<>();
+		w.add("a");
+		w.add("*");
+		w.add("(");
+		w.add("a");
+		w.add("+");
+		w.add("a");
+		w.add(")");
+		System.out.println(parser.parse(w));
+
 
     }
 }

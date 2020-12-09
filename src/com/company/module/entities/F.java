@@ -10,6 +10,10 @@ public class F {
         this.symbol = symbol;
     }
 
+    public void setSet(ArrayList<String> set1){
+        set = set1;
+    }
+
     public void add(String s){
         set.add(s);
     }

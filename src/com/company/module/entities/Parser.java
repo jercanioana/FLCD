@@ -1,8 +1,7 @@
 package com.company.module.entities;
 
 import java.sql.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Parser {
@@ -10,14 +9,21 @@ public class Parser {
     private Grammar g;
     private ArrayList<F> firsts = new ArrayList<>();
     private ArrayList<F> follows = new ArrayList<>();
-
+    private ArrayList<Pair<String, String>> numberedProductions = new ArrayList<>();
+    private ParseTable parseTable = new ParseTable();
+    private Stack<String> alpha = new Stack<>();
+    private Stack<String> beta = new Stack<>();
+    private Stack<String> pi = new Stack<>();
 
     public Parser(Grammar g) {
         this.g = g;
         initFirst();
         initFollow();
+        createParseTable();
 
     }
+
+
 
 
     public void initFollow() {
@@ -30,8 +36,9 @@ public class Parser {
                 F f1 = new F(n);
                 follows.add(f1);
             }
-        for (String n : g.getNonTerminals())
-            getFollow(n);
+        for (String n : g.getNonTerminals()){
+            getFollow(n, new ArrayList<>());
+        }
     }
 
     private ArrayList<String> getAll(Production p) {
@@ -44,44 +51,77 @@ public class Parser {
     }
 
 
-    private void getFollow(String n) {
+    public void getFollow(String n, ArrayList<String> visited) {
+
         ArrayList<Production> productions = g.productionContaining(n);
-        for (Production p : productions) {
-            ArrayList<String> items = getAll(p);
-            if (items.contains(n)) {
-                int index = items.indexOf(n);
-                index++;
-                if (index == items.size()) {
-                    getFollow(p.getFirst());
-                    for (String s : getFF(p.getFirst()).getSet())
-                        addF(n, s);
-                } else {
-                    ArrayList<ArrayList<String>> temp = new ArrayList<>();
-                    for(int k = index; k < items.size(); k++){
-                        String next = items.get(k);
-                        ArrayList<String> copy = new ArrayList<>(findF(next).getSet());
-                        temp.add(copy);
-                    }
-                    ArrayList<String> result = concat(temp);
-                    if(!result.contains("#")){
-                        for(String s: result){
-                            addF(n, s);
-                        }
-                    }else{
-                        result.remove("#");
-                        for(String s: result){
-                            addF(n, s);
-                        }
-                        getFollow(p.getFirst());
-                        for(String t: getFF(p.getFirst()).getSet()){
+        for(Production p: productions)
+        {
+            String startS = p.getFirst();
+            for (String s: p.getSecond()) {
+                String[] tokenstemp = s.split(" ");
+                ArrayList<String> tokens = new ArrayList<>(Arrays.asList(tokenstemp));
+                if (tokens.contains(n)) {
+                    if(visited.contains(n))
+                        continue;
+                    int index = tokens.indexOf(n);
+                    index++;
+                    if(index == tokens.size()) {
+                        visited.add(n);
+                        getFollow(startS, visited);
+                        for (String t: getFF(startS).getSet())
                             addF(n,t);
+                    }
+                    else {
+                        ArrayList<ArrayList<String>> temp = new ArrayList<>();
+                        for (int k = index; k < tokens.size(); k++) {
+                            String next = tokens.get(k);
+                            ArrayList<String> firstSet = getFirsts(next);
+                            temp.add(firstSet);
+                        }
+                        ArrayList<String> result = concat(temp);
+                        if (!result.contains("#"))
+                            for (String r: result)
+                                addF(n, r);
+                        else {
+                            result.remove("#");
+                            for (String r: result)
+                                addF(n, r);
+                            visited.add(n);
+                            getFollow(startS, visited);
+                            for (String t: getFollows(startS))
+                                addF(n,t);
                         }
                     }
                 }
+
             }
         }
 
+
     }
+    private ArrayList<String> concat(ArrayList<ArrayList<String>> temp) {
+        if (temp.size() == 1)
+            return temp.get(0);
+        ArrayList<String> result = new ArrayList<>();
+        boolean check = true;
+
+        for (int i = 0; i < temp.size() - 1; i++)
+            for(int j = 0; j < temp.size(); j++)
+            {
+                if (!temp.get(i).contains("#") || !temp.get(j).contains("#"))
+                    check = false;
+                for (String s1: temp.get(i))
+                    for(String s2: temp.get(j))
+                        if(s1.equals("#") && !s2.equals("#"))
+                            result.add(s2);
+                        else if (!s1.equals("#"))
+                            result.add(s1);
+            }
+        if(check)
+            result.add("#");
+        return result;
+    }
+
 
     public F getFF(String s) {
         for (F f : follows)
@@ -106,7 +146,8 @@ public class Parser {
             firsts.add(f);
         }
         for (String nonTerminal : N) {
-            getFirst(nonTerminal);
+            F f = findF(nonTerminal);
+            f.setSet(getFirst(nonTerminal));
         }
     }
 
@@ -128,59 +169,133 @@ public class Parser {
         }
     }
 
-    public void getFirst(String nonTerminal) {
+    public ArrayList<String> getFirst(String nonTerminal) {
         Production p = g.getProduct(nonTerminal);
-        ArrayList<ArrayList<String>> temp = new ArrayList<>();
+        ArrayList<String> temp = new ArrayList<>();
         for (String pr : p.getSecond()) {
             String[] tokens = pr.split(" ");
-            int index = 0;
-            for (String token : tokens) {
-                index++;
-                if (g.getTerminals().contains(token)) {
-                    if(index <= 1)
-                        add(nonTerminal, token);
-                    ArrayList<String> elem = new ArrayList<>();
-                    elem.add(token);
-                    temp.add(elem);
-                } else {
-                    getFirst(token);
-                    ArrayList<String> setToken = findF(token).getSet();
-                    temp.add(setToken);
-                }
-
-
+            String token = tokens[0];
+            if(token.equals("#")){
+                temp.add("#");
             }
+            else if(g.getTerminals().contains(token)){
+                temp.add(token);
+            }else
+                temp.addAll(getFirst(token));
         }
-        ArrayList<String> result = concat(temp);
-        for (String s : result) {
-            add(nonTerminal, s);
+
+
+        return temp;
+    }
+
+    public void createParseTable(){
+        numberingProductions();
+        ArrayList<String> columns = new ArrayList<>(g.getTerminals());
+        columns.add("$");
+        columns.remove("#");
+        parseTable.put(new Pair<>("$", "$"), new Pair<>(new ArrayList<String>(Collections.singleton("accept")), -1));
+        for(String t: g.getTerminals()){
+            parseTable.put(new Pair<>(t, t), new Pair<>(new ArrayList<String>(Collections.singleton("pop")), -1));
+        }
+        for(Pair<String, String> p:numberedProductions) {
+            String row = p.getL();
+            String[] rhs1 = p.getR().split(" ");
+            ArrayList<String> rhs = new ArrayList<>();
+            rhs.addAll(Arrays.asList(rhs1));
+            Pair<ArrayList<String>, Integer> parseTableValue = new Pair<>(rhs, numberedProductions.indexOf(p)+1);
+            for(String column: columns){
+                Pair<String, String> key = new Pair<>(row, column);
+                if(rhs.get(0).equals(column) && !column.equals("#"))
+                    parseTable.put(key, parseTableValue);
+                else if(g.getNonTerminals().contains(rhs.get(0)) && findF(rhs.get(0)).getSet().contains(column)){
+                    if(!parseTable.containsKey(key)){
+                        parseTable.put(key, parseTableValue);
+                    }
+                }
+                else{
+                    if (rhs.get(0).equals("#")) {
+                        for (String b : getFF(row).getSet())
+                            if(!parseTable.containsKey(new Pair<>(row, b))) {
+                                parseTable.put(new Pair<>(row, b), parseTableValue);
+                            }
+
+                    }
+
+                }
+            }
+
         }
     }
 
-    private ArrayList<String> concat(ArrayList<ArrayList<String>> temp) {
+    private void initStacks(ArrayList<String> w) {
+        alpha.clear();
+        alpha.push("$");
+        pushChars(w, alpha);
 
-        if (temp.size() == 1)
-            return temp.get(0);
-        ArrayList<String> result = new ArrayList<>();
-        boolean check = true;
-        for (int i = 0; i < temp.size() - 1; i++) {
-            for (int j = 0; j < temp.size(); j++) {
-                if (!temp.get(i).contains("#") || !temp.get(j).contains("#")) {
-                    check = false;
-                }
-                for (String s1 : temp.get(i)) {
-                    for (String s2 : temp.get(j)) {
-                        if (s1.equals("#") && !s2.equals("#"))
-                            result.add(s2);
-                        else if (!s1.equals("#")) {
-                            result.add(s1);
-                        }
-                    }
+        beta.clear();
+        beta.push("$");
+        beta.push(g.getStartSymbol());
+
+        pi.clear();
+        pi.push("#");
+    }
+
+    private void pushChars(ArrayList<String> w, Stack<String> alpha) {
+        for(int i = w.size() - 1; i >= 0; i--)
+            alpha.push(w.get(i));
+    }
+
+    public boolean parse(ArrayList<String> w) {
+        initStacks(w);
+        boolean go = true;
+        boolean result = true;
+
+        while(go) {
+            String headb = beta.peek();
+            String heada = alpha.peek();
+            System.out.println("alpha");
+            System.out.println(getAlpha());
+            System.out.println("beta");
+            System.out.println(getBeta());
+            System.out.println("pi");
+            System.out.println(getPi());
+
+            if(headb.equals("$") && heada.equals("$"))
+                return result;
+
+            Pair<String, String> heads = new Pair<>(headb, heada);
+            Pair<ArrayList<String>, Integer> parseT = parseTable.get(heads);
+
+            if (parseT == null) {
+                heads = new Pair<>(headb, "#");
+                parseT = parseTable.get(heads);
+                if (parseT != null) {
+                    beta.pop();
+                    continue;
                 }
             }
-        }
-        if (check) {
-            result.add("#");
+
+            if(parseT == null) {
+                go = false;
+                result = false;
+            }
+            else {
+                ArrayList<String> production = parseT.getL();
+                Integer prodPos = parseT.getR();
+
+                if(prodPos == -1 && production.get(0).equals("accept"))
+                    go = false;
+                else if (prodPos == -1 && production.get(0).equals("pop")) {
+                    beta.pop();
+                    alpha.pop();
+                }
+                else {
+                    beta.pop();
+                    if(!production.get(0).equals("#"))
+                        pushChars(production,beta);
+                    pi.push(prodPos.toString());
+                }
+            }
         }
         return result;
     }
@@ -202,5 +317,37 @@ public class Parser {
         return null;
 
 
+    }
+
+    public void numberingProductions(){
+        for(Production production: g.getProducts()) {
+            for (String second : production.getSecond()) {
+                numberedProductions.add(new Pair(production.getFirst(), second));
+            }
+        }
+    }
+
+    public ArrayList<String> getFollows(String X) {
+        for (F f : follows)
+            if (f.getSymbol().equals(X))
+                return (ArrayList<String>) f.getSet().stream().distinct().collect(Collectors.toList());
+        return null;
+
+    }
+
+    public ParseTable getParseTable(){
+        return parseTable;
+    }
+
+    public Stack<String> getAlpha() {
+        return alpha;
+    }
+
+    public Stack<String> getBeta() {
+        return beta;
+    }
+
+    public Stack<String> getPi() {
+        return pi;
     }
 }

@@ -1,0 +1,53 @@
+%{ 	 
+#include <math.h> 
+#include <stdio.h>
+#include "y.tab.h"
+int lines = 0;
+%} 
+%option noyywrap
+IDENTIFIER [a-z][A-Za-z0-9]*
+STRING_CONST [\"][ a-zA-Z0-9_.!,\s]*[\"]
+NUMBER_CONST 0|[\+]*[\-]*[1-9]+[0-9]*
+%%
+"if" {printf("  %s\n", yytext ); return IF;}
+"then" {printf(" then \n"); return THEN;}
+"else" {printf(" else \n"); return ELSE;}
+"while" {printf(" while \n"); return WHILE;}
+"execute" {printf(" execute \n"); return EXECUTE;}
+"array" {printf(" array \n"); return ARRAY;}
+"int" {printf(" int \n"); return INT;}
+"string" {printf(" string \n"); return STRING;}
+"read" {printf(" read \n"); return  READ;}
+"write" {printf(" write \n"); return WRITE;}
+"," {printf(" coma \n"); return coma;}
+";" {printf(" semicolon \n"); return semicolon;}
+"[" {printf(" leftSquareBracket \n"); return leftSquareBracket;}
+"]" {printf(" rightSquareBracket \n"); return rightSquareBracket;}
+"(" {printf(" leftRoundBracket \n"); return leftRoundBracket;}
+")" {printf(" rightRoundBracket \n"); return rightRoundBracket;}
+"{" {printf(" startCurlyBracket \n"); return startCurlyBracket;}
+"}" {printf(" endCurlyBracket \n"); return endCurlyBracket;}
+"+" {printf(" plus \n"); return plus;}
+"-" {printf(" minus \n"); return minus;}
+"*" {printf(" multiply \n"); return multiply;}
+"/" {printf(" division \n"); return division;}
+"=" {printf(" equal \n"); return equal;}
+"<" {printf(" lessThan \n"); return lessThan;}
+"<=" {printf(" lessThanOrEqual \n"); return lessThanOrEqual;}
+"==" {printf(" equalTo \n"); return equalTo;}
+">" {printf(" greaterThan \n"); return greaterThan;}
+">=" {printf(" greaterThanOrEqual \n"); return greaterThanOrEqual;}
+"<>" {printf(" different \n"); return different;}
+"%" {printf(" modulo \n"); return modulo;}
+{IDENTIFIER} {printf(" identifier \n"); return identifier;}
+{STRING_CONST} {printf(" string_const \n"); return string_const;}
+{NUMBER_CONST} {printf(" number_const \n"); return number_const;}
+
+[ \t]+ 	{}
+
+[\n]+	{++lines;}
+[\+]*[\-]*[0]+[1-9]+[0-9]* {printf("Illegal number constant %d\n", lines); return -1;}
+([\"][a-zA-Z0-9_.!\s]*|[a-zA-Z0-9_.!\s]*[\"]) {printf("Illegal string constant at line %d\n", lines); return -1;}
+[0-9!,._][A-Za-z0-9] {printf("Wrong name for identifier at line %d\n", lines); return -1;}
+.	{printf("Illegal symbol at linesss \n"); return -1;}
+%%
